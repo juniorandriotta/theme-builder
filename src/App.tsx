@@ -15,6 +15,11 @@ const generateTheme = (primaryColor: string): ThemeColors => {
   const secondaryContainer = chroma(secondary).brighten(2).hex();
   const secondaryContainerDark = chroma(secondary).darken(2).hex();
 
+  const tertiary = chroma(primaryColor).set("hsl.h", "-30").hex();
+  const tertiaryDark = chroma(tertiary).darken(1.5).hex();
+  const tertiaryContainer = chroma(tertiary).brighten(2).hex();
+  const tertiaryContainerDark = chroma(tertiary).darken(2).hex();
+
   const onPrimary = chroma.contrast(primary, "#000") > 4.5 ? "#000" : "#FFF";
   const onPrimaryDark =
     chroma.contrast(primaryDark, "#000") > 4.5 ? "#000" : "#FFF";
@@ -23,6 +28,10 @@ const generateTheme = (primaryColor: string): ThemeColors => {
     chroma.contrast(secondary, "#000") > 4.5 ? "#000" : "#FFF";
   const onSecondaryDark =
     chroma.contrast(secondaryDark, "#000") > 4.5 ? "#000" : "#FFF";
+
+  const onTertiary = chroma.contrast(tertiary, "#000") > 4.5 ? "#000" : "#FFF";
+  const onTertiaryDark =
+    chroma.contrast(tertiaryDark, "#000") > 4.5 ? "#000" : "#FFF";
 
   const background = "#FFFFFF";
   const backgroundDark = "#121212";
@@ -38,10 +47,16 @@ const generateTheme = (primaryColor: string): ThemeColors => {
     secondaryDark,
     secondaryContainer,
     secondaryContainerDark,
+    tertiary,
+    tertiaryDark,
+    tertiaryContainer,
+    tertiaryContainerDark,
     onPrimary,
     onPrimaryDark,
     onSecondary,
     onSecondaryDark,
+    onTertiary,
+    onTertiaryDark,
     background,
     backgroundDark,
     surface,
@@ -49,10 +64,15 @@ const generateTheme = (primaryColor: string): ThemeColors => {
   };
 };
 
-const exportTheme = (theme: ThemeColors): string => {
+const exportThemeXML = (theme: ThemeColors): string => {
   return Object.entries(theme)
     .map(([key, value]) => `<Color x:Key="${key}">${value}</Color>`)
     .join("\n");
+};
+
+const exportThemeJS = (theme: ThemeColors): string => {
+  const themeObject = JSON.stringify(theme, null, 2);
+  return `export const theme = ${themeObject};`;
 };
 
 const App: React.FC = () => {
@@ -64,13 +84,23 @@ const App: React.FC = () => {
     setTheme(generatedTheme);
   };
 
-  const handleExportTheme = () => {
+  const handleExport = (format: "xml" | "js") => {
     if (theme) {
-      const themeXML = exportTheme(theme);
-      const blob = new Blob([themeXML], { type: "text/xml" });
+      let content = "";
+      let fileName = "";
+
+      if (format === "xml") {
+        content = exportThemeXML(theme);
+        fileName = "theme.xml";
+      } else if (format === "js") {
+        content = exportThemeJS(theme);
+        fileName = "theme.js";
+      }
+
+      const blob = new Blob([content], { type: "text/plain" });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = "theme.xml";
+      link.download = fileName;
       link.click();
     }
   };
@@ -87,10 +117,15 @@ const App: React.FC = () => {
           onChange={(e) => setPrimaryColor(e.target.value)}
         />
       </div>
-      <button onClick={handleGenerateTheme}>Generate Theme</button>
-      <button onClick={handleExportTheme} disabled={!theme}>
-        Export Theme
-      </button>
+      <div className="button-exports">
+        <button onClick={handleGenerateTheme}>Generate Theme</button>
+        <button onClick={() => handleExport("xml")} disabled={!theme}>
+          Export as XML
+        </button>
+        <button onClick={() => handleExport("js")} disabled={!theme}>
+          Export as JS
+        </button>
+      </div>
 
       {theme && (
         <div className="theme-container">

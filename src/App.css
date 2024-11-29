@@ -1,116 +1,143 @@
-/* Reset básico */
-body,
-html {
+/* styles.css */
+
+/* General Styles */
+body {
+  font-family: "Poppins", sans-serif;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-}
-
-/* Estilo geral */
-body {
-  font-family: "Arial", sans-serif;
-  background: linear-gradient(to bottom right, #f0f4f8, #e6e8ed);
-  color: #333;
+  background: linear-gradient(135deg, #0450b3, #00b4d8);
+  color: #ffffff;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
 }
 
-/* Container principal */
 .app-container {
-  width: 100%;
-  max-width: 800px;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
+  align-self: center;
+  background-color: #1c1c1e;
+  border-radius: 15px;
+  padding: 20px 30px;
+  max-width: 900px;
+  width: 90%;
+  box-shadow: 0px 15px 25px rgba(0, 0, 0, 0.5);
 }
 
-/* Títulos */
 h1 {
-  font-size: 2rem;
-  color: #003882;
+  font-size: 2.5rem;
   margin-bottom: 20px;
+  text-align: center;
+  color: #ffffff;
 }
 
-h2 {
-  font-size: 1.5rem;
-  color: #575e71;
-  margin-bottom: 10px;
-}
-
-/* Input de cor */
 .color-input-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin-bottom: 20px;
 }
 
 .color-input-container label {
-  font-size: 1rem;
-  color: #333;
-  margin-right: 10px;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
 }
 
-.color-input-container input[type="color"] {
-  cursor: pointer;
+input[type="color"] {
   border: none;
-  padding: 5px;
-  background: none;
+  outline: none;
+  background: transparent;
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Botões */
+input[type="color"]:hover {
+  transform: scale(1.1);
+}
+
 button {
-  padding: 10px 15px;
-  margin: 5px;
-  font-size: 1rem;
+  display: inline-block;
+  background: linear-gradient(45deg, #00d4ff, #003882);
+  color: #ffffff;
   border: none;
-  border-radius: 5px;
-  background: #003882;
-  color: #fff;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  margin: 5px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background 0.3s ease, transform 0.3s ease;
+  text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
+button:hover {
+  background: linear-gradient(45deg, #003882, #00b4d8);
+  transform: translateY(-3px);
+}
+
+.button-exports {
+  display: flex;
+  justify-content: center;
+}
 button:disabled {
-  background: #ccc;
+  background: #555;
   cursor: not-allowed;
 }
 
-button:hover:not(:disabled) {
-  background: #0056b3;
+.theme-container {
+  margin-top: 30px;
 }
 
-/* Container dos cards */
-.theme-container {
-  margin-top: 20px;
+.theme-container h2 {
+  font-size: 1.8rem;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 .theme-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 15px;
+  grid-template-columns: repeat(3, minmax(150px, 1fr));
+  gap: 20px;
 }
 
 .theme-card {
-  width: 150px;
-  height: 150px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  color: #fff;
-  font-size: 14px;
+  border-radius: 10px;
+  padding: 15px;
   text-align: center;
-  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
 }
 
 .theme-card strong {
-  font-size: 14px;
+  display: block;
+  font-size: 1rem;
+  margin-bottom: 5px;
+  color: inherit;
 }
 
 .theme-card span {
-  font-size: 12px;
+  font-size: 0.9rem;
+  color: inherit;
+}
+
+.theme-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 15px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2rem;
+  }
+
+  button {
+    font-size: 0.9rem;
+    padding: 8px 15px;
+  }
+
+  .theme-card {
+    padding: 10px;
+  }
 }
