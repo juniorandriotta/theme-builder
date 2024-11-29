@@ -1,12 +1,9 @@
 import React, { useState } from "react";
 import chroma from "chroma-js";
+import "./App.css";
 
-// Tipagem para o tema
-type ThemeColors = {
-  [key: string]: string;
-};
+type ThemeColors = { [key: string]: string };
 
-// Função que gera o tema com base na cor primária
 const generateTheme = (primaryColor: string): ThemeColors => {
   const primary = chroma(primaryColor).hex();
   const primaryDark = chroma(primaryColor).darken(1.5).hex();
@@ -52,14 +49,12 @@ const generateTheme = (primaryColor: string): ThemeColors => {
   };
 };
 
-// Função que exporta o tema em formato XML
 const exportTheme = (theme: ThemeColors): string => {
   return Object.entries(theme)
     .map(([key, value]) => `<Color x:Key="${key}">${value}</Color>`)
     .join("\n");
 };
 
-// Componente principal
 const App: React.FC = () => {
   const [primaryColor, setPrimaryColor] = useState("#003882");
   const [theme, setTheme] = useState<ThemeColors | null>(null);
@@ -81,49 +76,37 @@ const App: React.FC = () => {
   };
 
   return (
-    <div style={{ fontFamily: "Arial, sans-serif", padding: "20px" }}>
+    <div className="app-container">
       <h1>Theme Builder</h1>
-      <div style={{ marginBottom: "20px" }}>
+      <div className="color-input-container">
         <label htmlFor="primaryColor">Primary Color:</label>
         <input
           id="primaryColor"
           type="color"
           value={primaryColor}
           onChange={(e) => setPrimaryColor(e.target.value)}
-          style={{ marginLeft: "10px" }}
         />
       </div>
-      <button onClick={handleGenerateTheme} style={{ marginRight: "10px" }}>
-        Generate Theme
-      </button>
+      <button onClick={handleGenerateTheme}>Generate Theme</button>
       <button onClick={handleExportTheme} disabled={!theme}>
         Export Theme
       </button>
 
       {theme && (
-        <div style={{ marginTop: "20px" }}>
+        <div className="theme-container">
           <h2>Generated Theme:</h2>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+          <div className="theme-cards">
             {Object.entries(theme).map(([key, value]) => (
               <div
                 key={key}
+                className="theme-card"
                 style={{
-                  width: "150px",
-                  height: "150px",
                   backgroundColor: value,
                   color: chroma.contrast(value, "#000") > 4.5 ? "#000" : "#FFF",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexDirection: "column",
-                  borderRadius: "8px",
-                  boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)",
                 }}
               >
-                <strong style={{ fontSize: "14px", textAlign: "center" }}>
-                  {key}
-                </strong>
-                <span style={{ fontSize: "12px" }}>{value}</span>
+                <strong>{key}</strong>
+                <span>{value}</span>
               </div>
             ))}
           </div>
