@@ -2,7 +2,11 @@ import React, { useState } from "react";
 import chroma from "chroma-js";
 import "./App.css";
 
-type ThemeColors = { [key: string]: string };
+type ThemeColors = {
+  [category: string]: {
+    [key: string]: string;
+  };
+};
 
 const generateTheme = (primaryColor: string): ThemeColors => {
   const primary = chroma(primaryColor).hex();
@@ -20,18 +24,13 @@ const generateTheme = (primaryColor: string): ThemeColors => {
   const tertiaryContainer = chroma(tertiary).brighten(2).hex();
   const tertiaryContainerDark = chroma(tertiary).darken(2).hex();
 
+  const primaryGradient = `linear-gradient(45deg, ${primary}, ${primaryContainer})`;
+  const secondaryGradient = `linear-gradient(45deg, ${secondary}, ${primary})`;
+  const tertiaryGradient = `linear-gradient(45deg, ${tertiary}, ${primaryContainerDark})`;
+
   const onPrimary = chroma.contrast(primary, "#000") > 4.5 ? "#000" : "#FFF";
   const onPrimaryDark =
     chroma.contrast(primaryDark, "#000") > 4.5 ? "#000" : "#FFF";
-
-  const onSecondary =
-    chroma.contrast(secondary, "#000") > 4.5 ? "#000" : "#FFF";
-  const onSecondaryDark =
-    chroma.contrast(secondaryDark, "#000") > 4.5 ? "#000" : "#FFF";
-
-  const onTertiary = chroma.contrast(tertiary, "#000") > 4.5 ? "#000" : "#FFF";
-  const onTertiaryDark =
-    chroma.contrast(tertiaryDark, "#000") > 4.5 ? "#000" : "#FFF";
 
   const background = "#FFFFFF";
   const backgroundDark = "#121212";
@@ -39,34 +38,51 @@ const generateTheme = (primaryColor: string): ThemeColors => {
   const surfaceDark = chroma(backgroundDark).brighten(0.2).hex();
 
   return {
-    primary,
-    primaryDark,
-    primaryContainer,
-    primaryContainerDark,
-    secondary,
-    secondaryDark,
-    secondaryContainer,
-    secondaryContainerDark,
-    tertiary,
-    tertiaryDark,
-    tertiaryContainer,
-    tertiaryContainerDark,
-    onPrimary,
-    onPrimaryDark,
-    onSecondary,
-    onSecondaryDark,
-    onTertiary,
-    onTertiaryDark,
-    background,
-    backgroundDark,
-    surface,
-    surfaceDark,
+    Primary: {
+      primary,
+      primaryDark,
+      primaryContainer,
+      primaryContainerDark,
+      onPrimary,
+      onPrimaryDark,
+    },
+    Secondary: {
+      secondary,
+      secondaryDark,
+      secondaryContainer,
+      secondaryContainerDark,
+    },
+    Tertiary: {
+      tertiary,
+      tertiaryDark,
+      tertiaryContainer,
+      tertiaryContainerDark,
+    },
+    Background: {
+      background,
+      backgroundDark,
+      surface,
+      surfaceDark,
+    },
+    Gradients: {
+      primaryGradient,
+      secondaryGradient,
+      tertiaryGradient,
+    },
   };
 };
 
 const exportThemeXML = (theme: ThemeColors): string => {
   return Object.entries(theme)
-    .map(([key, value]) => `<Color x:Key="${key}">${value}</Color>`)
+    .map(([category, colors]) =>
+      Object.entries(colors)
+        .map(([key, value]) =>
+          value.startsWith("linear-gradient")
+            ? `<LinearGradient x:Key="${key}">${value}</LinearGradient>`
+            : `<Color x:Key="${key}">${value}</Color>`
+        )
+        .join("\n")
+    )
     .join("\n");
 };
 
@@ -131,19 +147,34 @@ const App: React.FC = () => {
         <div className="theme-container">
           <h2>Generated Theme:</h2>
           <div className="theme-cards">
-            {Object.entries(theme).map(([key, value]) => (
-              <div
-                key={key}
-                className="theme-card"
-                style={{
-                  backgroundColor: value,
-                  color: chroma.contrast(value, "#000") > 4.5 ? "#000" : "#FFF",
-                }}
-              >
-                <strong>{key}</strong>
-                <span>{value}</span>
-              </div>
-            ))}
+            {theme &&
+              Object.entries(theme).map(([category, colors]) => (
+                <div key={category} className="theme-category">
+                  <h3>{category}</h3>
+                  <div className="theme-cards">
+                    {Object.entries(colors).map(([key, value]) => {
+                      const isGradient = value.startsWith("linear-gradient");
+                      return (
+                        <div
+                          key={key}
+                          className="theme-card"
+                          style={{
+                            background: value,
+                            color: isGradient
+                              ? "#FFF"
+                              : chroma.contrast(value, "#000") > 4.5
+                              ? "#000"
+                              : "#FFF",
+                          }}
+                        >
+                          <strong>{key}</strong>
+                          <span>{isGradient ? "Gradient" : value}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
           </div>
         </div>
       )}
